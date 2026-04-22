@@ -6,7 +6,7 @@ resource "azurerm_private_endpoint" "apim" {
   name                = "pe-apim-${local.name_suffix}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  subnet_id           = azurerm_subnet.pe.id
+  subnet_id           = local.subnet_pe_id
   tags                = local.common_tags
 
   private_service_connection {

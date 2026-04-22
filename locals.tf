@@ -19,6 +19,10 @@ locals {
     apim           = "apim-${local.name_suffix}"
   }
 
+  # Subnet IDs from inline VNet subnets
+  subnet_pe_id   = one([for s in azurerm_virtual_network.main.subnet : s.id if s.name == "snet-pe"])
+  subnet_apim_id = one([for s in azurerm_virtual_network.main.subnet : s.id if s.name == "snet-apim"])
+
   common_tags = merge({
     environment = var.environment
     project     = var.prefix

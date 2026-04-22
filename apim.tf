@@ -14,7 +14,7 @@ resource "azurerm_api_management" "main" {
   public_network_access_enabled = true
 
   virtual_network_configuration {
-    subnet_id = azurerm_subnet.apim.id
+    subnet_id = local.subnet_apim_id
   }
 
   security {

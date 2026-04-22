@@ -1,45 +1,5 @@
 # ------------------------------------------------------------------------------
-# Virtual Network
-# ------------------------------------------------------------------------------
-
-resource "azurerm_virtual_network" "main" {
-  name                = local.resource_names.vnet
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
-  address_space       = var.vnet_address_space
-  tags                = local.common_tags
-}
-
-# ------------------------------------------------------------------------------
-# Subnets
-# ------------------------------------------------------------------------------
-
-resource "azurerm_subnet" "pe" {
-  name                 = "snet-pe"
-  resource_group_name  = azurerm_resource_group.main.name
-  virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes     = [var.subnet_prefixes["pe"]]
-}
-
-resource "azurerm_subnet" "apim" {
-  name                 = "snet-apim"
-  resource_group_name  = azurerm_resource_group.main.name
-  virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes     = [var.subnet_prefixes["apim"]]
-
-  delegation {
-    name = "apim-delegation"
-    service_delegation {
-      name = "Microsoft.Web/serverFarms"
-      actions = [
-        "Microsoft.Network/virtualNetworks/subnets/action",
-      ]
-    }
-  }
-}
-
-# ------------------------------------------------------------------------------
-# Network Security Groups
+# Network Security Groups (created before VNet so inline subnets can reference them)
 # ------------------------------------------------------------------------------
 
 resource "azurerm_network_security_group" "pe" {
@@ -82,15 +42,33 @@ resource "azurerm_network_security_group" "apim" {
 }
 
 # ------------------------------------------------------------------------------
-# NSG Associations
+# Virtual Network with inline subnets (NSG attached at creation to satisfy policy)
 # ------------------------------------------------------------------------------
 
-resource "azurerm_subnet_network_security_group_association" "pe" {
-  subnet_id                 = azurerm_subnet.pe.id
-  network_security_group_id = azurerm_network_security_group.pe.id
-}
+resource "azurerm_virtual_network" "main" {
+  name                = local.resource_names.vnet
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  address_space       = var.vnet_address_space
+  tags                = local.common_tags
 
-resource "azurerm_subnet_network_security_group_association" "apim" {
-  subnet_id                 = azurerm_subnet.apim.id
-  network_security_group_id = azurerm_network_security_group.apim.id
+  subnet {
+    name             = "snet-pe"
+    address_prefixes = [var.subnet_prefixes["pe"]]
+    security_group   = azurerm_network_security_group.pe.id
+  }
+
+  subnet {
+    name             = "snet-apim"
+    address_prefixes = [var.subnet_prefixes["apim"]]
+    security_group   = azurerm_network_security_group.apim.id
+
+    delegation {
+      name = "apim-delegation"
+      service_delegation {
+        name    = "Microsoft.Web/serverFarms"
+        actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+      }
+    }
+  }
 }
