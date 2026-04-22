@@ -1,0 +1,25 @@
+# PSRule configuration for THMP APIM infrastructure
+# https://azure.github.io/PSRule.Rules.Azure/
+
+input:
+  pathIgnore:
+    - '.terraform/'
+    - '*.tfstate'
+    - '*.tfstate.backup'
+
+configuration:
+  AZURE_PARAMETER_DEFAULTS:
+    location: 'swedencentral'
+
+output:
+  culture:
+    - 'en-US'
+
+rule:
+  tag:
+    release: 'GA'
+
+binding:
+  targetType:
+    - type
+    - resourceType
