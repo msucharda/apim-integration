@@ -39,10 +39,10 @@ variable "subnet_prefixes" {
 variable "apim_sku" {
   type        = string
   description = "APIM SKU name"
-  default     = "Standardv2"
+  default     = "StandardV2"
   validation {
-    condition     = contains(["Developer", "Basic", "Standard", "Standardv2", "Premium"], var.apim_sku)
-    error_message = "APIM SKU must be one of: Developer, Basic, Standard, Standardv2, Premium."
+    condition     = contains(["Developer", "Basic", "Standard", "StandardV2", "Premium", "PremiumV2"], var.apim_sku)
+    error_message = "APIM SKU must be one of: Developer, Basic, Standard, StandardV2, Premium, PremiumV2."
   }
 }
 

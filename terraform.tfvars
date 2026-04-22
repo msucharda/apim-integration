@@ -3,7 +3,7 @@ environment = "prod"
 prefix      = "igw"
 
 # APIM
-apim_sku             = "Standardv2"
+apim_sku             = "StandardV2"
 apim_capacity        = 1
 apim_publisher_name  = "thmp"
 apim_publisher_email = "podpora@thmp.cz"

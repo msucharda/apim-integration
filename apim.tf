@@ -50,3 +50,4 @@ resource "azurerm_api_management_logger" "app_insights" {
     instrumentation_key = azurerm_application_insights.main.instrumentation_key
   }
 }
+
